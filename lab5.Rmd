@@ -1,5 +1,7 @@
 ---
-title: "team"
+title: "lab5"
+author: "Zihao Han"
+date: "April 16, 2019"
 output: html_document
 ---
 
@@ -12,7 +14,6 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 acc <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/fars2017/accident.csv", stringsAsFactors = FALSE)
-
 weekacc <- function(x) {
     return(sum(acc$DAY_WEEK == x))
 }
@@ -34,20 +35,19 @@ hour = c(0:23)
 df2 <- data.frame(totalh,hour)
 df2
 ggplot(df2,aes(x= hour, y=totalh)) + geom_col() + theme(axis.text.x = element_text(angle = 0, hjust = 1)) + xlab("hours of day") + ylab("Amount of accidents happened") + ggtitle("Accidents happened on hours")
-
-
-
 ```
+
 Most accident happened from 10am to 6pm.
 ```{r}
 numOfdrunk = sum(acc$DRUNK_DR >= 1)
 numOfdrunk
-
 ```
+
 There are 8769 Accidents happened with at least one drunk driver.
 
 ```{r}
 per <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/fars2017/person.csv", stringsAsFactors = FALSE)
+per
 drivers <- subset(per,PER_TYP==1)
 drivers
 
@@ -62,15 +62,13 @@ str(dat)
 
 ```{r}
 DAYWEEK<-dat%>%group_by(DAY_WEEK)%>%tally
-
+DAYWEEK
 HOUR<-dat%>%group_by(HOUR)%>%tally
 SEX<-dat%>%group_by(SEX)%>%tally
-
+SEX
 a<-dat%>%group_by(DAY_WEEK,HOUR,SEX)%>%tally
-
+a
 ggplot(DAYWEEK,aes(x=DAY_WEEK,y=n))+geom_point()
 ggplot(HOUR,aes(x=HOUR,y=n))+geom_point()
 ggplot(SEX,aes(x=SEX,y=n))+geom_point()
 ```
-
-
