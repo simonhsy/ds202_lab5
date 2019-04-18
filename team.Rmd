@@ -49,7 +49,7 @@ There are 8769 Accidents happened with at least one drunk driver.
 ```{r}
 per <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/fars2017/person.csv", stringsAsFactors = FALSE)
 drivers <- subset(per,PER_TYP==1)
-drivers
+head(drivers)
 
 ```
 
@@ -72,5 +72,31 @@ ggplot(DAYWEEK,aes(x=DAY_WEEK,y=n))+geom_point()
 ggplot(HOUR,aes(x=HOUR,y=n))+geom_point()
 ggplot(SEX,aes(x=SEX,y=n))+geom_point()
 ```
+```{r}
+library(readxl)
+library(tidyverse)
+glc1 <- readxl::read_xlsx("FRPP GLC United States.xlsx",skip=1)
+glc1$`State Code` <-as.numeric(as.character(glc1$`State Code`))
+glc1$`County Code` <-as.numeric(as.character(glc1$`County Code`))
+county <- map_data("county")
+cty <- summarise(group_by(acc,STATE,COUNTY,MONTH),count =n())
+cnt = inner_join(glc1,cty,by=c("State Code"="STATE","County Code" = "COUNTY"))
+cntf <- cnt %>% mutate(`County Name`= tolower(`County Name`)) %>% select(`County Name`, `County Code`,count,`State Name`,MONTH)
+final <- left_join(county,cntf,by=c("subregion"="County Name"))
+final %>% ggplot(aes(x = long, y = lat, fill=count)) +
+  geom_polygon(aes(group=group))
 
 
+```
+
+```{r}
+
+final %>% filter(MONTH==12) %>% ggplot(aes(x = long, y = lat, fill=count)) +
+  geom_polygon(aes(group=group)) + ggtitle ("Accidents in December by county")
+
+final %>% filter(MONTH==7) %>% ggplot(aes(x = long, y = lat, fill=count)) +
+  geom_polygon(aes(group=group)) + ggtitle ("Accidents in July by county")
+
+```
+
+Conculsion: There are more accidents in July(Summer) than December(Winter). Summer is more dangerous because in winter people drive with more care.
